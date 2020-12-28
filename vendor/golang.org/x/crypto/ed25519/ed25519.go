@@ -50,20 +50,20 @@ type PublicKey []byte
 type PrivateKey []byte
 
 // Public returns the PublicKey corresponding to priv.
-func (priv PrivateKey) Public() crypto.PublicKey {
-	publicKey := make([]byte, PublicKeySize)
-	copy(publicKey, priv[32:])
-	return PublicKey(publicKey)
-}
+// func (priv PrivateKey) Public() crypto.PublicKey {
+// 	publicKey := make([]byte, PublicKeySize)
+// 	copy(publicKey, priv[32:])
+// 	return PublicKey(publicKey)
+// }
 
 // Seed returns the private key seed corresponding to priv. It is provided for
 // interoperability with RFC 8032. RFC 8032's private keys correspond to seeds
 // in this package.
-func (priv PrivateKey) Seed() []byte {
-	seed := make([]byte, SeedSize)
-	copy(seed, priv[:32])
-	return seed
-}
+// func (priv PrivateKey) Seed() []byte {
+// 	seed := make([]byte, SeedSize)
+// 	copy(seed, priv[:32])
+// 	return seed
+// }
 
 // Sign signs the given message with priv.
 // Ed25519 performs two passes over messages to be signed and therefore cannot
@@ -80,50 +80,50 @@ func (priv PrivateKey) Sign(rand io.Reader, message []byte, opts crypto.SignerOp
 
 // GenerateKey generates a public/private key pair using entropy from rand.
 // If rand is nil, crypto/rand.Reader will be used.
-func GenerateKey(rand io.Reader) (PublicKey, PrivateKey, error) {
-	if rand == nil {
-		rand = cryptorand.Reader
-	}
+// func GenerateKey(rand io.Reader) (PublicKey, PrivateKey, error) {
+// 	if rand == nil {
+// 		rand = cryptorand.Reader
+// 	}
 
-	seed := make([]byte, SeedSize)
-	if _, err := io.ReadFull(rand, seed); err != nil {
-		return nil, nil, err
-	}
+// 	seed := make([]byte, SeedSize)
+// 	if _, err := io.ReadFull(rand, seed); err != nil {
+// 		return nil, nil, err
+// 	}
 
-	privateKey := NewKeyFromSeed(seed)
-	publicKey := make([]byte, PublicKeySize)
-	copy(publicKey, privateKey[32:])
+// 	privateKey := NewKeyFromSeed(seed)
+// 	publicKey := make([]byte, PublicKeySize)
+// 	copy(publicKey, privateKey[32:])
 
-	return publicKey, privateKey, nil
-}
+// 	return publicKey, privateKey, nil
+// }
 
 // NewKeyFromSeed calculates a private key from a seed. It will panic if
 // len(seed) is not SeedSize. This function is provided for interoperability
 // with RFC 8032. RFC 8032's private keys correspond to seeds in this
 // package.
-func NewKeyFromSeed(seed []byte) PrivateKey {
-	if l := len(seed); l != SeedSize {
-		panic("ed25519: bad seed length: " + strconv.Itoa(l))
-	}
+// func NewKeyFromSeed(seed []byte) PrivateKey {
+// 	if l := len(seed); l != SeedSize {
+// 		panic("ed25519: bad seed length: " + strconv.Itoa(l))
+// 	}
 
-	digest := sha512.Sum512(seed)
-	digest[0] &= 248
-	digest[31] &= 127
-	digest[31] |= 64
+// 	digest := sha512.Sum512(seed)
+// 	digest[0] &= 248
+// 	digest[31] &= 127
+// 	digest[31] |= 64
 
-	var A edwards25519.ExtendedGroupElement
-	var hBytes [32]byte
-	copy(hBytes[:], digest[:])
-	edwards25519.GeScalarMultBase(&A, &hBytes)
-	var publicKeyBytes [32]byte
-	A.ToBytes(&publicKeyBytes)
+// 	var A edwards25519.ExtendedGroupElement
+// 	var hBytes [32]byte
+// 	copy(hBytes[:], digest[:])
+// 	edwards25519.GeScalarMultBase(&A, &hBytes)
+// 	var publicKeyBytes [32]byte
+// 	A.ToBytes(&publicKeyBytes)
 
-	privateKey := make([]byte, PrivateKeySize)
-	copy(privateKey, seed)
-	copy(privateKey[32:], publicKeyBytes[:])
+// 	privateKey := make([]byte, PrivateKeySize)
+// 	copy(privateKey, seed)
+// 	copy(privateKey[32:], publicKeyBytes[:])
 
-	return privateKey
-}
+// 	return privateKey
+// }
 
 // Sign signs the message with privateKey and returns a signature. It will
 // panic if len(privateKey) is not PrivateKeySize.
