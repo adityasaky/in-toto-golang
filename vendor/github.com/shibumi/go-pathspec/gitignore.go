@@ -68,9 +68,7 @@
 package pathspec
 
 import (
-	"bufio"
 	"bytes"
-	"io"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -107,30 +105,30 @@ func GitIgnore(patterns []string, name string) (ignore bool, err error) {
 // is that GitIgnore works on a string slice.
 //
 // ReadGitIgnore returns a boolean value if we match or not and an error.
-func ReadGitIgnore(content io.Reader, name string) (ignore bool, err error) {
-	scanner := bufio.NewScanner(content)
+// func ReadGitIgnore(content io.Reader, name string) (ignore bool, err error) {
+// 	scanner := bufio.NewScanner(content)
 
-	for scanner.Scan() {
-		pattern := strings.TrimSpace(scanner.Text())
-		if len(pattern) == 0 || pattern[0] == '#' {
-			continue
-		}
-		p := parsePattern(pattern)
-		// Convert Windows paths to Unix paths
-		name = filepath.ToSlash(name)
-		match, err := regexp.MatchString(p.Regex, name)
-		if err != nil {
-			return ignore, err
-		}
-		if match {
-			if p.Include {
-				return false, scanner.Err()
-			}
-			ignore = true
-		}
-	}
-	return ignore, scanner.Err()
-}
+// 	for scanner.Scan() {
+// 		pattern := strings.TrimSpace(scanner.Text())
+// 		if len(pattern) == 0 || pattern[0] == '#' {
+// 			continue
+// 		}
+// 		p := parsePattern(pattern)
+// 		// Convert Windows paths to Unix paths
+// 		name = filepath.ToSlash(name)
+// 		match, err := regexp.MatchString(p.Regex, name)
+// 		if err != nil {
+// 			return ignore, err
+// 		}
+// 		if match {
+// 			if p.Include {
+// 				return false, scanner.Err()
+// 			}
+// 			ignore = true
+// 		}
+// 	}
+// 	return ignore, scanner.Err()
+// }
 
 func parsePattern(pattern string) *gitIgnorePattern {
 	p := &gitIgnorePattern{}
