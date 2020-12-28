@@ -1,0 +1,7 @@
+# github.com/shibumi/go-pathspec v1.2.0
+## explicit
+github.com/shibumi/go-pathspec
+# golang.org/x/crypto v0.0.0-20201112155050-0c6587e931a9
+## explicit
+golang.org/x/crypto/ed25519
+golang.org/x/crypto/ed25519/internal/edwards25519
